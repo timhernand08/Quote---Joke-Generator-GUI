@@ -1,5 +1,6 @@
 import customtkinter
-from generator import get_joke, get_quote
+from generator import checker
+
 
 class ButtonFrame(customtkinter.CTkFrame):
     def __init__(self, master, value, title):
@@ -13,15 +14,18 @@ class ButtonFrame(customtkinter.CTkFrame):
 
         self.text = customtkinter.CTkTextbox(self, height=100, wrap="word")
         self.text.grid(row = 1, column = 0, padx=10, pady=(10, 0), sticky = "nsew")
-        self.text.insert("0.0", f"{select_gen(self.value)}")
+        self.text.insert("0.0", f"{checker(self.value)}")
         self.text.configure(state="disabled")
 
     def get_button(self):
         self.text.configure(state="normal")
         self.text.delete("0.0", "end")
-        self.text.insert("0.0", f"{select_gen(self.value)}")
+        self.text.insert("0.0", f"{checker(self.value)}")
         self.text.configure(state="disabled")
 
+    def get(self):
+        return self.text.get("0.0", "end")
+    
 
 
 class App(customtkinter.CTk):
@@ -40,12 +44,14 @@ class App(customtkinter.CTk):
         self.joke_button = ButtonFrame(self, title = "Generate Joke", value="joke")
         self.joke_button.grid(row=0, column = 1, padx=10, pady=10, sticky="nsew")
 
-def select_gen(value: str) -> str:
-    if value == "quote":
-        return get_quote()
-    else:
-        return get_joke()
 
+    def get_quote(self):
+        return self.quote_button.get()
+    
+    def get_joke(self):
+        return self.joke_button.get()
 
-app = App()
-app.mainloop()
+"""
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()"""

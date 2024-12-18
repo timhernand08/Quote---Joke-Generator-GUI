@@ -1,27 +1,30 @@
 import customtkinter
 from generator import checker
 
-
 class ButtonFrame(customtkinter.CTkFrame):
     def __init__(self, master, value, title):
         super().__init__(master)
         self.grid_columnconfigure(0, weight=1)
         self.value = value
         self.title= title
+        text = checker(self.value)
 
         button = customtkinter.CTkButton(self, text=title, command=self.get_button)
         button.grid(row = 0, column = 0, padx=10, pady=(10, 0), sticky = "ew")
 
         self.text = customtkinter.CTkTextbox(self, height=100, wrap="word")
         self.text.grid(row = 1, column = 0, padx=10, pady=(10, 0), sticky = "nsew")
-        self.text.insert("0.0", f"{checker(self.value)}")
+        self.text.insert("0.0", f"{text}")
         self.text.configure(state="disabled")
+        set_value(self.value, text)
 
     def get_button(self):
+        text = checker(self.value)
         self.text.configure(state="normal")
         self.text.delete("0.0", "end")
-        self.text.insert("0.0", f"{checker(self.value)}")
+        self.text.insert("0.0", f"{text}")
         self.text.configure(state="disabled")
+        set_value(self.value, text)
 
     def get(self):
         return self.text.get("0.0", "end")
@@ -51,7 +54,23 @@ class App(customtkinter.CTk):
     def get_joke(self):
         return self.joke_button.get()
 
-"""
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()"""
+quote = ""
+joke = ""
+
+def get_value(type) -> str:
+    return quote if type == "quote" else joke
+
+def set_value(value, text):
+    if value == "quote":
+        global quote 
+        quote = text
+    else:
+        global joke
+        joke = text
+
+        
+    
+"""app = App()
+app.mainloop"""
+
+

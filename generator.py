@@ -22,21 +22,21 @@ def get_joke():
   return setup + "\n" + delivery
 
 def checker(value):
-    gen = ""
-    if(value == "quote"):
-        gen = get_quote()
-        count =0
-        while hasQuote(gen):
-            gen = get_quote()
-            count+=1
-            if count == 10:
-                print("You're about to brick your PC homie")
-    elif (value == "joke"):
-        gen = get_joke()
-        count =0
-        while hasJoke(gen):
-            gen = get_joke()
-            count+=1
-            if count == 10:
-                print("You're about to brick your PC homie")
-    return gen
+  gen = ""
+  if(value == "quote"):
+      gen = get_quote()
+      count =0
+      while hasQuote(gen):
+          gen = get_quote()
+          count+=1
+          if count == 10:
+              print("You're about to brick your PC homie")
+  elif (value == "joke"):
+      gen = get_joke()
+      count =0
+      while hasJoke(gen):
+          gen = get_joke()
+          count+=1
+          if count == 10:
+              print("You're about to brick your PC homie")
+  return gen

@@ -53,8 +53,8 @@ def update_time_trigger(table):
     connect = sqlite3.connect('Client_data.db')
     cur = connect.cursor()
     cur.execute(f'''
-        CREATE TRIGGER IF NOT EXISTS update_all_updated_at
-        AFTER INSERT ON jokes 
+        CREATE TRIGGER IF NOT EXISTS update_all_{table}_updated_at
+        AFTER INSERT ON {table} 
         BEGIN 
             UPDATE {table}
             SET updated_at = CURRENT_TIMESTAMP;

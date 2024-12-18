@@ -2,7 +2,7 @@ import requests, json
 from memory import hasJoke, hasQuote
 
 QUOTE_API = 'https://zenquotes.io/api/random'
-JOKE_API = 'https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,racist,explicit'
+JOKE_API = 'https://v2.jokeapi.dev/joke/Any?safe-mode'
 
 def get_quote():
   response = requests.get(QUOTE_API)

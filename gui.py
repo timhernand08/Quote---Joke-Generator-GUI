@@ -1,5 +1,15 @@
 import customtkinter
 from generator import checker
+import os
+import sys
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class ButtonFrame(customtkinter.CTkFrame):
     def __init__(self, master, value, title):
@@ -37,7 +47,7 @@ class App(customtkinter.CTk):
 
         self.title("Quote & Joke Generator")
         self.geometry("400x200")
-        customtkinter.set_default_color_theme("custom_theme.json")
+        customtkinter.set_default_color_theme(resource_path("custom_theme.json"))
         self.grid_columnconfigure((0,1), weight=1)
         self.grid_rowconfigure(0, weight=1)
 

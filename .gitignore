@@ -1,2 +1,5 @@
 Client_data.db
 __pycache__
+build
+dist
+main.spec

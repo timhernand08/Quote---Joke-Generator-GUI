@@ -81,7 +81,7 @@ def timePassed(table):
         
 def resource_path(relative_path):
     if getattr(sys, 'frozen', False):
-        application_path = sys._MEIPASS
+        application_path = os.environ['APPDATA']
         print("Pyinstaller bunde")
     else:
         application_path = os.path.dirname(os.path.abspath(__file__))

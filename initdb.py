@@ -1,8 +1,6 @@
 import sqlite3
- 
-def connect_db():
-    connect = sqlite3.connect('Client_data.db')
-    return connect
+import sys, os 
+
  
 def initialize_db():
     connect = connect_db()
@@ -42,5 +40,18 @@ def initialize_db():
    
     connect.commit()
     connect.close()
+
+def resource_path(relative_path):
+    if getattr(sys, 'frozen', False):
+        application_path = sys._MEIPASS
+        print("Pyinstaller bunde")
+    else:
+        application_path = os.path.dirname(os.path.abspath(__file__))
+        print("Normal process")
+    return os.path.join(application_path, relative_path)
  
-initialize_db()
+def connect_db():
+    connect = sqlite3.connect(resource_path('Client_data.db'))
+    return connect
+
+#initialize_db()

@@ -1,10 +1,10 @@
 import sqlite3, time
 from datetime import datetime
-
+import os, sys
 
     
 def storeData(quote, joke):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute("INSERT INTO jokes (joke) VALUES (:joke)", {'joke': joke})
     cur.execute("INSERT INTO quotes (quote) VALUES (:quote)", {'quote': quote})
@@ -14,7 +14,7 @@ def storeData(quote, joke):
     timePassed("jokes")
 
 def hasQuote(quote):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute("SELECT EXISTS(SELECT 1 FROM quotes WHERE quote = ?)", (quote,))
 
@@ -28,7 +28,7 @@ def hasQuote(quote):
         return False
     
 def hasJoke(joke):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute("SELECT EXISTS(SELECT 1 FROM jokes WHERE joke = ?)", (joke,))
 
@@ -42,7 +42,7 @@ def hasJoke(joke):
         return False
     
 def delete(id, table):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute(f"""DELETE FROM {table} WHERE id =:ID """, {'ID':id})
     connect.commit()
@@ -50,7 +50,7 @@ def delete(id, table):
 
 
 def update_time_trigger(table):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute(f'''
         CREATE TRIGGER IF NOT EXISTS update_all_{table}_updated_at
@@ -65,7 +65,7 @@ def update_time_trigger(table):
         
 
 def timePassed(table):
-    connect = sqlite3.connect('Client_data.db')
+    connect = sqlite3.connect(resource_path('Client_data.db'))
     cur = connect.cursor()
     cur.execute(f"SELECT id, created_at, updated_at FROM {table}")
     rows = cur.fetchall()
@@ -79,7 +79,14 @@ def timePassed(table):
             delete(id, table)
             
         
-    
+def resource_path(relative_path):
+    if getattr(sys, 'frozen', False):
+        application_path = sys._MEIPASS
+        print("Pyinstaller bunde")
+    else:
+        application_path = os.path.dirname(os.path.abspath(__file__))
+        print("Normal process")
+    return os.path.join(application_path, relative_path)    
 
 
 if __name__  == "__main__":

@@ -51,7 +51,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure((0,1), weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.quote_button = ButtonFrame(self, title="Generate Guote", value="quote")
+        self.quote_button = ButtonFrame(self, title="Generate Quote", value="quote")
         self.quote_button.grid(row = 0, column = 0, padx=10, pady=10, sticky = "nsew")
 
         self.joke_button = ButtonFrame(self, title = "Generate Joke", value="joke")

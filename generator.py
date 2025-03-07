@@ -2,7 +2,7 @@ import requests, json
 from memory import hasJoke, hasQuote
 
 QUOTE_API = 'https://zenquotes.io/api/random'
-JOKE_API = 'https://v2.jokeapi.dev/joke/Any?safe-mode'
+JOKE_API = 'https://icanhazdadjoke.com/'
 
 def get_quote():
   response = requests.get(QUOTE_API)
@@ -11,15 +11,16 @@ def get_quote():
   return quote
 
 def get_joke():
-  response = requests.get(JOKE_API)
-  json_data = json.loads(response.text)
-  try:
-    joke = json_data['joke']
-    return joke
-  except:
-    setup = json_data['setup']
-    delivery = json_data['delivery']
-  return setup + "\n" + delivery
+   headers = {
+      "Accept": "application/json",
+      "User-Agent": "Quote Joke Generator (https://github.com/timhernand08/Quote---Joke-Generator-GUI)"
+   }
+   response = requests.get(JOKE_API, headers = headers)
+   json_data = json.loads(response.text)
+   joke = json_data['joke']
+   return joke
+
+
 
 def checker(value):
   gen = ""

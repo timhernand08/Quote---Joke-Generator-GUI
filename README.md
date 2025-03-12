@@ -6,12 +6,11 @@ This project is a simple Python script that generates a random quote and a joke 
 
 - Automatically generates and displays a random quote and a random joke when the program starts.
 - Users can request a new quote or joke at any time.
-- The program will continue running until the user types `done` to exit.
 
 ## APIs Used
 
 - **Quote API**: [ZenQuotes](https://zenquotes.io/) provides random inspirational quotes.
-- **Joke API**: [JokeAPI](https://jokeapi.dev/) provides random jokes with the ability to filter out inappropriate content (NSFW, racist, or explicit).
+- **Joke API**: [icanhazdadjoke](https://icanhazdadjoke.com/) provides random dad jokes.
 
 ## How to Use
 
@@ -22,37 +21,13 @@ This project is a simple Python script that generates a random quote and a joke 
     ```
 3. Run the Python script:
     ```bash
-    python quote_joke_generator.py
+    python main.py
     ```
 4. The program will display a random quote and a random joke.
-5. You can request a new quote by typing `quote`, or a new joke by typing `joke`.
-6. To terminate the program, type `done`.
+5. You can request a new quote by pressing `generate quote`, or a new joke by pressing `generate joke`.
 
-## Example Usage
-
-```bash
-"Believe you can and you're halfway there."
- - Theodore Roosevelt
-
-What do you call fake spaghetti?
-An impasta!
-
-Please enter if you want a new quote or joke. Or enter 'done': quote
-
-"Success is not the key to happiness. Happiness is the key to success."
- - Albert Schweitzer
-
-Make a new request: joke
-
-Why don't skeletons fight each other?
-They don't have the guts!
-
-Make a new request: done
-Data has been saved to memory. Thank you for using the Quote & Joke Generator!
-```
 ## New Features!
-Added memory database. This will store the last quotes and jokes that were given before the user terminated the program with "done". This will allow the program
-to keep track of what has been said so they won't be repeated. Any entries over 90 days old will be removed automatically so that they can be reused.
+Changed the joke API. The last API featured too many jokes related to programming. Changed to an API that is more general.
 
 
 ## License

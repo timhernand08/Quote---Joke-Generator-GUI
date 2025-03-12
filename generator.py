@@ -32,6 +32,8 @@ def checker(value):
           count+=1
           if count == 10:
               print("You're about to brick your PC homie")
+              gen = "Could not connect to API. Please try again later"
+              break
   elif (value == "joke"):
       gen = get_joke()
       count =0
@@ -40,4 +42,6 @@ def checker(value):
           count+=1
           if count == 10:
               print("You're about to brick your PC homie")
+              gen = "Could not connect to API. Please try again later"
+              break
   return gen

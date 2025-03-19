@@ -85,7 +85,6 @@ def resource_path(relative_path):
         print("Pyinstaller bunde")
     else:
         application_path = os.path.dirname(os.path.abspath(__file__))
-        print("Normal process")
     return os.path.join(application_path, relative_path)    
 
 

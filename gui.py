@@ -2,7 +2,7 @@ import customtkinter
 from generator import checker
 import os
 import sys
-import threading
+import threading, time
 
 def resource_path(relative_path):
     try:
@@ -27,7 +27,7 @@ class ButtonFrame(customtkinter.CTkFrame):
         self.text.insert("0.0", "Loading...")
         self.text.configure(state="disabled")
         
-        threading.Thread(target=self.load_initial_text).start()
+        threading.Thread(target=self.load_initial_text, daemon=True).start()
 
     def load_initial_text(self):
         text = checker(self.value)

@@ -28,6 +28,7 @@ def checker(value):
       gen = get_quote()
       count =0
       while hasQuote(gen):
+          print(f"The quote is '{gen}' and this exists")
           gen = get_quote()
           count+=1
           if count == 10:
@@ -38,6 +39,7 @@ def checker(value):
       gen = get_joke()
       count =0
       while hasJoke(gen):
+          print(f"The quote is '{gen}' and this exists")
           gen = get_joke()
           count+=1
           if count == 10:

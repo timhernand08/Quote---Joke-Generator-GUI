@@ -22,11 +22,10 @@ def get_quote2():
         mark_used(item['id'])
         return quote
     except KeyError:
-       return "No API calls available. Please try again later"
+      delete_cache()
+      return "No API calls available. Please try again later"
 
   return reset_cache()
-  #print(quote[0]['id'])
-  #return quote
 
 def get_joke():
    headers = {
@@ -55,6 +54,12 @@ def reset_cache():
   quote_cache()
   return get_quote2()
 
+def delete_cache():
+  data = []
+  with open('quotes.json', 'w', encoding="utf-8") as file:
+    json.dump(data, file, indent=4)
+  print("Cache deleted")
+
 def quote_cache():
   response = requests.get(QUOTE_API2)
   json_data = json.loads(response.text)
@@ -73,20 +78,21 @@ backup_q = False
 def checker(value):
   gen = ""
   global backup_q 
+  print(f"Using backup API? {backup_q}")
+
   if(value == "quote"):
       if(not backup_q):
-        gen = get_quote()
+        gen = get_quote2()
       else:
-         gen = get_quote2()
+        backup_q = True
+        gen = get_quote()
       count = 0
       while hasQuote(gen):
-          print(f"The quote is '{gen}' and this exists")
           gen = get_quote()
           count+=1
           if count == 10:
               print("You're about to brick your PC homie")
               gen = "Could not connect to API. Please try again later"
-              backup_q = True
               break
   elif (value == "joke"):
       gen = get_joke()
@@ -99,7 +105,6 @@ def checker(value):
               print("You're about to brick your PC homie")
               gen = "Could not connect to API. Please try again later"
               break
-  print(backup_q)
   return gen
 
 if __name__ == "__main__":

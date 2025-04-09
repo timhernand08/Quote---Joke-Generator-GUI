@@ -19,7 +19,7 @@ class ButtonFrame(customtkinter.CTkFrame):
         self.value = value
         self.title= title
 
-        button = customtkinter.CTkButton(self, text=title, command=self.get_button)
+        button = customtkinter.CTkButton(self, text=title, command=self.load)
         button.grid(row = 0, column = 0, padx=10, pady=(10, 0), sticky = "ew")
 
         self.text = customtkinter.CTkTextbox(self, height=100, wrap="word")
@@ -39,6 +39,13 @@ class ButtonFrame(customtkinter.CTkFrame):
         self.text.delete("0.0", "end")
         self.text.insert("0.0", f"{text}")
         self.text.configure(state="disabled")
+
+    def load(self):
+        self.text.configure(state="normal")
+        self.text.delete("0.0", "end")
+        self.text.insert("0.0", "Loading...")
+        self.text.configure(state="disabled")
+        threading.Thread(target=self.get_button, daemon=True).start()
 
 
     def get_button(self):

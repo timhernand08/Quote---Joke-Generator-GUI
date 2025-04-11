@@ -26,7 +26,15 @@ def delete_cache():
     json.dump(data, file, indent=4)
   print("Cache deleted")
 
+def create_cache() -> list:
+  quote_cache()
+  with open('quotes.json', 'r', encoding="utf-8") as file:
+    return json.load(file)
+
 def quote_cache():
+  """
+  Fetch quotes from one of the APIs and add them to a JSON file
+  """
   global backup_q
   if not backup_q:
     response = requests.get(QUOTE_API)

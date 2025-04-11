@@ -1,31 +1,34 @@
 import requests, json 
 from memory import hasJoke, hasQuote
+from cache import quote_cache, delete_cache, mark_used, set_backup
 
-QUOTE_API = 'https://zenquotes.io/api/random'
-QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
+
 JOKE_API = 'https://icanhazdadjoke.com/'
 
-def get_quote():
-  response = requests.get(QUOTE_API)
-  json_data = json.loads(response.text)
-  quote = json_data[0]['q'] + "\r\n - " + json_data[0]['a']
-  return quote
 
-def get_quote2():
+def get_quote():
   with open('quotes.json', 'r') as file:
     quotes = json.load(file)
 
   for item in quotes:
     try:
       if item["used"] == "False":
-        quote = item['quote'] + "\r\n - " + item['author']
-        mark_used(item['id'])
-        return quote
+        return quoter(item)
+      elif quotes ==[]:
+         reset_cache()
     except KeyError:
       delete_cache()
       return "No API calls available. Please try again later"
 
   return reset_cache()
+
+def quoter(item):
+  if not backup_q:
+    quote = item['q'] + "\r\n - " + item['a']
+  else:
+    quote = item['quote'] + "\r\n - " + item['author']
+  mark_used(item['id'])
+  return quote
 
 def get_joke():
    headers = {
@@ -37,43 +40,12 @@ def get_joke():
    joke = json_data['joke']
    return joke
 
-def mark_used(id):
-  with open('quotes.json', 'r') as file:
-    quotes = json.load(file)
-
-  for item in quotes:
-     if item['id'] == id:
-        item['used'] = "True"
-
-  with open('quotes.json', 'w', encoding="utf-8") as file:
-    json.dump(quotes, file, indent=4)  
-
-  print("Quote has been mark as used")
-
 def reset_cache():
   quote_cache()
-  return get_quote2()
-
-def delete_cache():
-  data = []
-  with open('quotes.json', 'w', encoding="utf-8") as file:
-    json.dump(data, file, indent=4)
-  print("Cache deleted")
-
-def quote_cache():
-  response = requests.get(QUOTE_API2)
-  json_data = json.loads(response.text)
-
-  for item in json_data:
-     item["used"] = "False"
-
-  with open('quotes.json', 'w', encoding="utf-8") as file:
-    json.dump(json_data, file, indent=4)
-
-  print("Cache updated with new quotes")
+  return get_quote()
 
 global backup_q
-backup_q = False
+set_backup(backup_q := False)
 
 def checker(value):
   gen = ""
@@ -81,11 +53,7 @@ def checker(value):
   print(f"Using backup API? {backup_q}")
 
   if(value == "quote"):
-      if(not backup_q):
-        gen = get_quote2()
-      else:
-        backup_q = True
-        gen = get_quote()
+      gen = get_quote()
       count = 0
       while hasQuote(gen):
           gen = get_quote()
@@ -93,6 +61,7 @@ def checker(value):
           if count == 10:
               print("You're about to brick your PC homie")
               gen = "Could not connect to API. Please try again later"
+              set_backup(backup_q := True)
               break
   elif (value == "joke"):
       gen = get_joke()
@@ -108,5 +77,5 @@ def checker(value):
   return gen
 
 if __name__ == "__main__":
-  print(get_quote2())
+  print(get_quote())
   #quote_cache()

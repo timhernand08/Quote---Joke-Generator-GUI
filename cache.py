@@ -1,0 +1,50 @@
+import json, requests
+
+QUOTE_API = 'https://zenquotes.io/api/quotes'
+QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
+
+global backup_q
+
+def mark_used(id):
+  with open('quotes.json', 'r') as file:
+    quotes = json.load(file)
+
+  for item in quotes:
+     if item['id'] == id:
+        item['used'] = "True"
+
+  with open('quotes.json', 'w', encoding="utf-8") as file:
+    json.dump(quotes, file, indent=4)  
+
+  print("Quote has been mark as used")
+
+
+
+def delete_cache():
+  data = []
+  with open('quotes.json', 'w', encoding="utf-8") as file:
+    json.dump(data, file, indent=4)
+  print("Cache deleted")
+
+def quote_cache():
+  global backup_q
+  if not backup_q:
+    response = requests.get(QUOTE_API)
+  else:
+    response = requests.get(QUOTE_API2)
+  json_data = json.loads(response.text)
+
+  for index, item in enumerate(json_data):
+     item["used"] = "False"
+     if not backup_q:
+        item["id"] = index
+        
+
+  with open('quotes.json', 'w', encoding="utf-8") as file:
+    json.dump(json_data, file, indent=4)
+
+  print("Cache updated with new quotes")
+
+def set_backup(value):
+    global backup_q
+    backup_q = value

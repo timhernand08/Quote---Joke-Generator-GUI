@@ -1,5 +1,5 @@
 import sqlite3
-import sys, os 
+from utils import resource_path
 
  
 def initialize_db():
@@ -40,14 +40,6 @@ def initialize_db():
    
     connect.commit()
     connect.close()
-
-def resource_path(relative_path):
-    if getattr(sys, 'frozen', False):
-        application_path = os.environ['APPDATA']
-        print("Running in Pyinstaller bundle")
-    else:
-        application_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(application_path, relative_path)
  
 def connect_db():
     connect = sqlite3.connect(resource_path('Client_data.db'))

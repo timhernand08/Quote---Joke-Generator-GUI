@@ -1,6 +1,6 @@
 import sqlite3, time
 from datetime import datetime
-import os, sys
+from utils import resource_path
 
     
 def storeData(quote, joke):
@@ -77,14 +77,6 @@ def timePassed(table):
         elapsed_time = (updated-created).days
         if (elapsed_time >= 90):
             delete(id, table)
-            
-        
-def resource_path(relative_path):
-    if getattr(sys, 'frozen', False):
-        application_path = os.environ['APPDATA']
-    else:
-        application_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(application_path, relative_path)    
 
 
 if __name__  == "__main__":

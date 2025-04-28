@@ -1,0 +1,1 @@
+pyinstaller --icon "C:/Users/thernandez/Downloads/Quote.ico" --noconfirm --onedir --windowed --add-data "C:/Users/thernandez/AppData/Local/Programs/Python/Python313/Lib/site-packages/customtkinter;customtkinter/" --add-data "custom_theme.json;." main.py 

@@ -72,7 +72,7 @@ def checker(value):
 			gen = get_joke()
 			count =0
 			while hasJoke(gen):
-					print(f"The quote is '{gen}' and this exists")
+					print(f"The joke is '{gen}' and this exists")
 					gen = get_joke()
 					count+=1
 					if count == 10:

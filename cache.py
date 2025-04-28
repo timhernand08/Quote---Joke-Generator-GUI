@@ -1,4 +1,5 @@
 import json, requests
+from os import path
 
 QUOTE_API = 'https://zenquotes.io/api/quotes'
 QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
@@ -6,14 +7,14 @@ QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quo
 global backup_q
 
 def mark_used(id):
-  with open('quotes.json', 'r') as file:
+  with open(resource_path('quotes.json'), 'r') as file:
     quotes = json.load(file)
 
   for item in quotes:
      if item['id'] == id:
         item['used'] = "True"
 
-  with open('quotes.json', 'w', encoding="utf-8") as file:
+  with open(resource_path('quotes.json'), 'w', encoding="utf-8") as file:
     json.dump(quotes, file, indent=4)  
 
   print("Quote has been mark as used")
@@ -22,13 +23,13 @@ def mark_used(id):
 
 def delete_cache():
   data = []
-  with open('quotes.json', 'w', encoding="utf-8") as file:
+  with open(resource_path('quotes.json'), 'w', encoding="utf-8") as file:
     json.dump(data, file, indent=4)
   print("Cache deleted")
 
 def create_cache() -> list:
   quote_cache()
-  with open('quotes.json', 'r', encoding="utf-8") as file:
+  with open(resource_path('quotes.json'), 'r', encoding="utf-8") as file:
     return json.load(file)
 
 def quote_cache():
@@ -48,7 +49,7 @@ def quote_cache():
         item["id"] = index
         
 
-  with open('quotes.json', 'w', encoding="utf-8") as file:
+  with open(resource_path('quotes.json'), 'w', encoding="utf-8") as file:
     json.dump(json_data, file, indent=4)
 
   print("Cache updated with new quotes")
@@ -56,3 +57,7 @@ def quote_cache():
 def set_backup(value):
     global backup_q
     backup_q = value
+
+def resource_path(relative_path):
+  bundle_dir = path.abspath(path.dirname(__file__))
+  return path.join(bundle_dir, relative_path)

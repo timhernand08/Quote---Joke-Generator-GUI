@@ -44,7 +44,7 @@ def initialize_db():
 def resource_path(relative_path):
     if getattr(sys, 'frozen', False):
         application_path = os.environ['APPDATA']
-        print("Pyinstaller bunde")
+        print("Running in Pyinstaller bundle")
     else:
         application_path = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(application_path, relative_path)

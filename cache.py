@@ -1,5 +1,5 @@
 import json, requests
-from os import path
+from utils import resource_path
 
 QUOTE_API = 'https://zenquotes.io/api/quotes'
 QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
@@ -59,8 +59,3 @@ def set_backup(value):
     global backup_q
     backup_q = value
 
-def resource_path(relative_path):
-  bundle_dir = path.abspath(path.dirname(__file__))
-  path_dir = path.join(bundle_dir, relative_path)
-  print(f'Json is located at: {path_dir}')
-  return path_dir

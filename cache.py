@@ -7,7 +7,7 @@ QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quo
 global backup_q
 
 def mark_used(id):
-  with open(resource_path('quotes.json'), 'r') as file:
+  with open(resource_path('quotes.json'), 'r', encoding="utf-8") as file:
     quotes = json.load(file)
 
   for item in quotes:
@@ -28,6 +28,7 @@ def delete_cache():
   print("Cache deleted")
 
 def create_cache() -> list:
+  print("Cache created")
   quote_cache()
   with open(resource_path('quotes.json'), 'r', encoding="utf-8") as file:
     return json.load(file)
@@ -60,4 +61,6 @@ def set_backup(value):
 
 def resource_path(relative_path):
   bundle_dir = path.abspath(path.dirname(__file__))
-  return path.join(bundle_dir, relative_path)
+  path_dir = path.join(bundle_dir, relative_path)
+  print(f'Json is located at: {path_dir}')
+  return path_dir

@@ -1,6 +1,6 @@
 import requests, json 
 from memory import hasJoke, hasQuote
-from cache import quote_cache, delete_cache, mark_used, set_backup, create_cache
+from cache import quote_cache, delete_cache, mark_used, set_backup, create_cache, resource_path
 
 
 JOKE_API = 'https://icanhazdadjoke.com/'
@@ -8,7 +8,7 @@ JOKE_API = 'https://icanhazdadjoke.com/'
 
 def get_quote() -> str:
 	try:
-		with open('quotes.json', 'r') as file:
+		with open(resource_path('quotes.json'), 'r') as file:
 			quotes = json.load(file)
 	except FileNotFoundError:
 		print("JSON doesn't exist. Creating JSON")

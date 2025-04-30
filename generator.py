@@ -1,17 +1,18 @@
 import requests, json 
 from memory import hasJoke, hasQuote
-from utils import resource_path
 from cache import Cache
 
 
 JOKE_API = 'https://icanhazdadjoke.com/'
+QUOTE_API = 'https://zenquotes.io/api/quotes'
+QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
 
 quote = Cache(False, 'quotes.json')
-#joke = Cache(False, 'jokes.json')
+joke = Cache(False, 'jokes.json')
 
 def get_quote() -> str:
 	"""
-	Retrieves an unused quote or resets the cache if all are used.
+	Gets an unused quote or resets the cache if all are used.
 	Returns:
 		str: The retrieved quote or an error message.
 	"""
@@ -19,16 +20,16 @@ def get_quote() -> str:
 	for item in quotes:
 		try:
 			if item["used"] == "False":
-				return quoter(item)
+				return format_quote(item)
 			elif quotes ==[]:
 				break
 		except KeyError:
 			quote.delete_cache()
 			return "No API calls available. Please try again later"
 
-	return reset_cache(quote)
+	return reset_cache(quote, QUOTE_API, QUOTE_API2, quote.get_backup())
 
-def quoter(item) -> str:
+def format_quote(item) -> str:
 	"""
 	Formats a quote string and marks it as used.
 
@@ -52,16 +53,30 @@ def get_joke():
 	joke = json_data['joke']
 	return joke
 
-def reset_cache(file: Cache) -> str:
-	file.create_quote_cache()
-	return get_quote()
+def reset_cache(file: Cache, primary_api, secondary_api:None, is_backup:False) -> str:
+	file.create_cache(primary_api, secondary_api, is_backup)
+	if file is quote:
+		return get_quote()
+	else:
+		return get_joke()
 
-global backup_q
-#set_backup(backup_q := False)
+
 
 def checker(value):
+	"""
+	Generates a quote or joke based on the input value and ensures uniqueness by checking against existing data.
+	Args:
+		value (str): The type of content to generate. 
+					 Accepts "quote" for generating quotes or "joke" for generating jokes.
+	Returns:
+		str: The generated quote or joke. If the API fails or uniqueness cannot be ensured after 10 attempts, 
+			 a fallback message is returned.
+	Notes:
+		- The function uses a backup API if the primary API fails.
+		- If the same quote or joke is repeatedly generated, the function retries up to 10 times.
+		- Prints warnings if the retry limit is reached.
+	"""
 	gen = ""
-	global backup_q 
 	print(f"Using backup quote API? {quote.get_backup()}")
 
 	if(value == "quote"):

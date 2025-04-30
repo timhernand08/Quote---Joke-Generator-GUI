@@ -29,7 +29,7 @@ class Cache:
 
   def create_cache(self) -> list:
     print("Cache created")
-    self.create_quote_cache()
+    self.create_cache()
     with open(resource_path(self.cache_file), 'r', encoding="utf-8") as file:
       return json.load(file)
     
@@ -42,26 +42,29 @@ class Cache:
       self.create_cache()
     return files
 
-  def create_quote_cache(self):
+  def create_cache(self, primary_api, backup_api=None, is_backup=False):
     """
-    Fetch quotes from one of the APIs and add them to a JSON file
+    Fetch data from the given API and adds them to a JSON file
     """
-    if not self.backup_val:
-      response = requests.get(QUOTE_API)
-    else:
-      response = requests.get(QUOTE_API2)
-    json_data = json.loads(response.text)
-
+    api_url = backup_api if is_backup and backup_api else primary_api
+    try:
+      response = requests.get(api_url)
+      response.raise_for_status()
+      json_data = json.loads(response.text)
+    except requests.ResquestException as e:
+      print(f"Error fetching data from {api_url}: {e}")
+      return
+    
     for index, item in enumerate(json_data):
-      item["used"] = "False"
-      if not self.backup_val:
-          item["id"] = index
+        item["used"] = "False"
+        if not is_backup and primary_api == QUOTE_API: 
+            item["id"] = index
           
 
     with open(resource_path(self.cache_file), 'w', encoding="utf-8") as file:
       json.dump(json_data, file, indent=4)
 
-    print("Cache updated with new quotes")
+    print(f"Cache updated with new data from {api_url}") 
 
   def set_backup(self, value) -> None:
       self.backup_val = value

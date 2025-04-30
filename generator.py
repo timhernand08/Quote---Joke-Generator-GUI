@@ -1,20 +1,21 @@
 import requests, json 
 from memory import hasJoke, hasQuote
-from cache import quote_cache, delete_cache, mark_used, set_backup, create_cache, resource_path
+from utils import resource_path
+from cache import Cache
 
 
 JOKE_API = 'https://icanhazdadjoke.com/'
 
+quote = Cache(False, 'quotes.json')
+#joke = Cache(False, 'jokes.json')
 
 def get_quote() -> str:
-	try:
-		with open(resource_path('quotes.json'), 'r') as file:
-			quotes = json.load(file)
-	except FileNotFoundError:
-		print("JSON doesn't exist. Creating JSON")
-		quotes = create_cache()
-		
-
+	"""
+	Retrieves an unused quote or resets the cache if all are used.
+	Returns:
+		str: The retrieved quote or an error message.
+	"""
+	quotes = quote.get_file()
 	for item in quotes:
 		try:
 			if item["used"] == "False":
@@ -22,18 +23,24 @@ def get_quote() -> str:
 			elif quotes ==[]:
 				break
 		except KeyError:
-			delete_cache()
+			quote.delete_cache()
 			return "No API calls available. Please try again later"
 
-	return reset_cache()
+	return reset_cache(quote)
 
 def quoter(item) -> str:
-	if not backup_q:
-		quote = item['q'] + "\r\n - " + item['a']
-	else:
-		quote = item['quote'] + "\r\n - " + item['author']
-	mark_used(item['id'])
-	return quote
+	"""
+	Formats a quote string and marks it as used.
+
+	Args:
+		item (dict): Contains quote details.
+
+	Returns:
+		str: Formatted quote.
+	"""
+	key_text, key_author = ('q', 'a') if not quote.get_backup() else ('quote', 'author')
+	quote.mark_used(item['id'])
+	return f"{item[key_text]}\r\n - {item[key_author]}"
 
 def get_joke():
 	headers = {
@@ -45,17 +52,17 @@ def get_joke():
 	joke = json_data['joke']
 	return joke
 
-def reset_cache() -> str:
-	quote_cache()
+def reset_cache(file: Cache) -> str:
+	file.create_quote_cache()
 	return get_quote()
 
 global backup_q
-set_backup(backup_q := False)
+#set_backup(backup_q := False)
 
 def checker(value):
 	gen = ""
 	global backup_q 
-	print(f"Using backup API? {backup_q}")
+	print(f"Using backup quote API? {quote.get_backup()}")
 
 	if(value == "quote"):
 			gen = get_quote()
@@ -66,7 +73,7 @@ def checker(value):
 					if count == 10:
 							print("You're about to brick your PC homie")
 							gen = "Could not connect to API. Please try again later"
-							set_backup(backup_q := True)
+							quote.set_backup(True)
 							break
 	elif (value == "joke"):
 			gen = get_joke()
@@ -81,6 +88,7 @@ def checker(value):
 							break
 	return gen
 
+
+
 if __name__ == "__main__":
-	print(get_quote())
-	#quote_cache()
+	print(checker("quote"))

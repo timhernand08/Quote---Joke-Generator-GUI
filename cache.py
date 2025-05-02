@@ -4,9 +4,10 @@ from utils import resource_path
 QUOTE_API = 'https://zenquotes.io/api/quotes'
 QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
 class Cache:
-  def __init__(self, backup_val: bool, cache_file: str):
+  def __init__(self, backup_val: bool, cache_file: str, api: str):
     self.backup_val = backup_val
     self.cache_file = cache_file
+    self.api = api
 
   def mark_used(self, id) -> None:
     with open(resource_path(self.cache_file), 'r', encoding="utf-8") as file:
@@ -27,9 +28,9 @@ class Cache:
       json.dump(data, file, indent=4)
     print("Cache deleted")
 
-  def create_cache(self) -> list:
+  def create_json(self) -> list:
     print("Cache created")
-    self.create_cache()
+    self.create_cache(self.api)
     with open(resource_path(self.cache_file), 'r', encoding="utf-8") as file:
       return json.load(file)
     
@@ -39,8 +40,9 @@ class Cache:
         files = json.load(file)
     except FileNotFoundError:
       print("JSON doesn't exist. Creating JSON")
-      self.create_cache()
+      files = self.create_json()
     return files
+
 
   def create_cache(self, primary_api, backup_api=None, is_backup=False):
     """
@@ -51,7 +53,7 @@ class Cache:
       response = requests.get(api_url)
       response.raise_for_status()
       json_data = json.loads(response.text)
-    except requests.ResquestException as e:
+    except requests.RequestException as e:
       print(f"Error fetching data from {api_url}: {e}")
       return
     

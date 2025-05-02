@@ -7,8 +7,7 @@ JOKE_API = 'https://icanhazdadjoke.com/'
 QUOTE_API = 'https://zenquotes.io/api/quotes'
 QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
 
-quote = Cache(False, 'quotes.json')
-joke = Cache(False, 'jokes.json')
+quote = Cache(False, 'quotes.json', QUOTE_API)
 
 def get_quote() -> str:
 	"""
@@ -48,12 +47,16 @@ def get_joke():
 			"Accept": "application/json",
 			"User-Agent": "Quote Joke Generator (https://github.com/timhernand08/Quote---Joke-Generator-GUI)"
 	 }
-	response = requests.get(JOKE_API, headers = headers)
-	json_data = json.loads(response.text)
-	joke = json_data['joke']
-	return joke
+	try:
+		response = requests.get(JOKE_API, headers = headers)
+		json_data = json.loads(response.text)
+		jke = json_data['joke']
+	except requests.RequestException as e:
+		jke = "Could not connect. Please try again later."
+	return jke 
+	
 
-def reset_cache(file: Cache, primary_api, secondary_api:None, is_backup:False) -> str:
+def reset_cache(file: Cache, primary_api, secondary_api=None, is_backup=False) -> str:
 	file.create_cache(primary_api, secondary_api, is_backup)
 	if file is quote:
 		return get_quote()
@@ -106,4 +109,8 @@ def checker(value):
 
 
 if __name__ == "__main__":
-	print(checker("quote"))
+	user = input("Would you like to test 'joke' or 'quote': ")
+	print(checker(user))
+	while (user := input("Enter 'joke', 'quote', or 'quit': ")) != "quit":
+		print(checker(user))
+

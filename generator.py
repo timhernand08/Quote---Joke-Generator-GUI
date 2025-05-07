@@ -1,13 +1,16 @@
 import requests, json 
 from memory import hasJoke, hasQuote
 from cache import Cache
+from api_handler import APIS, format_joke, format_quote
 
+headers = {
+			"Accept": "application/json",
+			"User-Agent": "Quote Joke Generator (https://github.com/timhernand08/Quote---Joke-Generator-GUI)"
+	 		}
 
-JOKE_API = 'https://icanhazdadjoke.com/'
-QUOTE_API = 'https://zenquotes.io/api/quotes'
-QUOTE_API2 = 'https://quote-slate-timothy-hernandezs-projects.vercel.app/api/quotes/random?count=5'
+quote = Cache(False, 'quotes.json', APIS["quotes"]["primary"], "quote")
+joke_cache = Cache(False, 'jokes.json', APIS["jokes"]["primary"], "joke", headers)
 
-quote = Cache(False, 'quotes.json', QUOTE_API)
 
 def get_quote() -> str:
 	"""
@@ -19,16 +22,18 @@ def get_quote() -> str:
 	for item in quotes:
 		try:
 			if item["used"] == "False":
-				return format_quote(item)
+				quote.mark_used(item['id'])
+				return format_quote(item=item, is_backup=quote.get_backup())
 			elif quotes ==[]:
 				break
 		except KeyError:
 			quote.delete_cache()
 			return "No API calls available. Please try again later"
 
-	return reset_cache(quote, QUOTE_API, QUOTE_API2, quote.get_backup())
+	reset_cache(quote, APIS["quotes"]["primary"], APIS["quotes"]["backup"], quote.get_backup())
+	return get_quote()
 
-def format_quote(item) -> str:
+def format_quoter(item) -> str:
 	"""
 	Formats a quote string and marks it as used.
 
@@ -43,26 +48,32 @@ def format_quote(item) -> str:
 	return f"{item[key_text]}\r\n - {item[key_author]}"
 
 def get_joke():
-	headers = {
+	""" headers = {
 			"Accept": "application/json",
 			"User-Agent": "Quote Joke Generator (https://github.com/timhernand08/Quote---Joke-Generator-GUI)"
 	 }
 	try:
-		response = requests.get(JOKE_API, headers = headers)
+		response = requests.get(APIS["jokes"]["primary"], headers = headers)
 		json_data = json.loads(response.text)
 		jke = json_data['joke']
 	except requests.RequestException as e:
 		jke = "Could not connect. Please try again later."
-	return jke 
-	
+	return jke  """
+	jokes = joke_cache.get_file()
+	try:
+		if jokes["used"] == "False":
+			joke_cache.mark_used(jokes['id'])
+			return format_joke(jokes, is_backup=joke_cache.get_backup())
+	except KeyError:
+		joke_cache.delete_cache()
+		return "No API calls available. Please try again later"
+
+	reset_cache(joke_cache, APIS["jokes"]["primary"], APIS["jokes"]["backup"], joke_cache.get_backup())
+	return get_joke()
 
 def reset_cache(file: Cache, primary_api, secondary_api=None, is_backup=False) -> str:
 	file.create_cache(primary_api, secondary_api, is_backup)
-	if file is quote:
-		return get_quote()
-	else:
-		return get_joke()
-
+	#return get_quote()
 
 
 def checker(value):
@@ -79,32 +90,32 @@ def checker(value):
 		- If the same quote or joke is repeatedly generated, the function retries up to 10 times.
 		- Prints warnings if the retry limit is reached.
 	"""
-	gen = ""
+	content = ""
 	print(f"Using backup quote API? {quote.get_backup()}")
 
 	if(value == "quote"):
-			gen = get_quote()
+			content = get_quote()
 			count = 0
-			while hasQuote(gen):
-					gen = get_quote()
+			while hasQuote(content):
+					content = get_quote()
 					count+=1
 					if count == 10:
 							print("You're about to brick your PC homie")
-							gen = "Could not connect to API. Please try again later"
+							content = "Could not connect to API. Please try again later"
 							quote.set_backup(True)
 							break
 	elif (value == "joke"):
-			gen = get_joke()
+			content = get_joke()
 			count =0
-			while hasJoke(gen):
-					print(f"The joke is '{gen}' and this exists")
-					gen = get_joke()
+			while hasJoke(content):
+					print(f"The joke is '{content}' and this exists")
+					content = get_joke()
 					count+=1
 					if count == 10:
 							print("You're about to brick your PC homie")
-							gen = "Could not connect to API. Please try again later"
+							content = "Could not connect to API. Please try again later"
 							break
-	return gen
+	return content
 
 
 
